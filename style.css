@@ -1,0 +1,91 @@
+body{
+    margin: 0;
+    background-color: #F3F3F3;
+    overflow-x: hidden;
+}
+
+.splash-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+}
+
+.splash-title{
+    font-size: 10rem;
+}
+
+*,*::before,*::after{
+    font-family: 'Montserrat', sans-serif;
+    box-sizing: border-box;
+}
+
+.btn{
+    margin: 10px;
+    padding: 10px;
+    font-size: 40px;
+    outline: none;
+    border: none;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: .2em;
+    color: #9900ff;
+}
+
+.btn:hover, .btn:focus{
+    background-color: #b994e983;
+}
+
+
+
+
+
+
+
+
+
+
+
+.game-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    height: 98vh;
+    margin: 1vh 0vh 1vh 0vh;
+}
+
+.player-side,
+.computer-side{
+    display: flex;
+    flex-direction: column;
+    border: 1px dashed #9900ff;
+    align-items: center;
+}
+
+#player-grid-container,
+#computer-grid-container{
+    display: grid;
+    border: 1px solid gray;
+    grid-template-columns: repeat(10, 4vh);
+    grid-template-rows: repeat(10, 4vh);
+    margin: 5vmin;
+}
+
+.square{
+    border: 1px dashed gray;
+    height: 4vh;
+    width: 4vh;
+}
+
+.square-shot:hover{
+    background-color: #d3d3d3;
+}
+
+.square-ship{
+    border: none;
+    background-color: #48e42883;
+    height: 4vh;
+    width: 4vh;
+}
+
