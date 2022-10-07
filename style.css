@@ -83,9 +83,8 @@ body{
 }
 
 .square-ship{
-    border: none;
+    border: 1px dashed gray;
     background-color: #48e42883;
     height: 4vh;
     width: 4vh;
 }
-

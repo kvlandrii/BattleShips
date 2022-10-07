@@ -1,42 +1,44 @@
-function createUserGrid()
+function shipPlacementGeneration()
 {
-    const container = document.getElementById("player-grid-container");
+    createGrid(getContainer("player-grid-container"), true);
+    createGrid(getContainer("computer-grid-container"), false);
+}
+
+function createGrid(container, isUser)
+{
     for(let i = 0; i < 10; i++)
     {
         for(let j = 0; j < 10; j++)
         {
             var item = document.createElement("div");
-            item.id = i + " " + j;
-            item.className = "square ";
-            //item.innerHTML = i + " " + j;
+            if(isUser)
+            {
+                item.id = "user";
+                item.id += " square-" + i + "-" + j;
+            }
+            else
+            {
+                item.id = "computer";
+                item.id += " square-" + i + "-" + j;
+            }
+            item.className += " square";
             container.appendChild(item);
         }
     }
 }
 
-function createComputerGrid()
+function getContainer(id)
 {
-    const container = document.getElementById("computer-grid-container");
-    for(let i = 0; i < 10; i++)
-    {
-        for(let j = 0; j < 10; j++)
-        {
-            var item = document.createElement("div");
-            item.id = i + " " + j + " computer";
-            item.className = "square " + "square-shot ";
-            container.appendChild(item);
-        }
+    return document.getElementById(id);
+}
+
+function getShipRandomPosition() 
+{
+    return { 
+        x : Math.floor(Math.random() * 10),
+        y : Math.floor(Math.random() * 10),
+        isHorizontal : isHorizontal = Math.random() > 0.5 
     }
-}
-
-function getRandomStart()
-{
-    return Math.floor(Math.random() * 10);
-}
-
-function getRandomDirection()
-{
-    return Math.random() > 0.5;
 }
 
 function createShipCoordinates(squaresCount)
@@ -45,48 +47,45 @@ function createShipCoordinates(squaresCount)
     
     for(let ship = 0; ship < squaresCount.length; ship++)
     {
-        var start_row = getRandomStart();
-        var start_col = getRandomStart();
-
-        var isHorizontal = getRandomDirection();
-        
-        if (isHorizontal)
+        var position = getShipRandomPosition();
+    
+        if (position.isHorizontal)
         {
-            if(10 - squaresCount[ship] >= start_col)
+            if(10 - squaresCount[ship] >= position.x)
             {
                 for (let length = 0; length < squaresCount[ship]; length++)
                 {   
-                    shipCoordinates.push(start_row + " " + start_col);
-                    start_col++;
+                    shipCoordinates.push("ship-part-" + position.y + "-" + position.x);
+                    position.x++;
                 }
             }
             else
             {
-                start_col = 10 - squaresCount[ship];
+                position.x = 10 - squaresCount[ship];
                 for (let length = 0; length < squaresCount[ship]; length++)
                 {   
-                    shipCoordinates.push(start_row + " " + start_col);
-                    start_col++;
+                    shipCoordinates.push("ship-part-" + position.y + "-" + position.x);
+                    position.x++;
                 }
             }
         }
         else
         {
-            if(10 - squaresCount[ship] >= start_row)
+            if(10 - squaresCount[ship] >= position.y)
             {
                 for (let length = 0; length < squaresCount[ship]; length++)
                 {   
-                    shipCoordinates.push(start_row + " " + start_col);
-                    start_row++;
+                    shipCoordinates.push("ship-part-" + position.y + "-" + position.x);
+                    position.y++;
                 }
             }
             else
             {
-                start_row = 10 - squaresCount[ship];
+                position.y = 10 - squaresCount[ship];
                 for (let length = 0; length < squaresCount[ship]; length++)
                 {   
-                    shipCoordinates.push(start_row + " " + start_col);
-                    start_row++;
+                    shipCoordinates.push("ship-part-" + position.y + "-" + position.x);
+                    position.y++;
                 }
             }
         }
@@ -95,7 +94,7 @@ function createShipCoordinates(squaresCount)
     return shipCoordinates;
 }
 
-function createShipSquares(shipCoordinates, isUser)
+function createShipSquares(shipCoordinates, battleField)
 {
     for (let i = 0; i < shipCoordinates.length; i++) 
     {
@@ -103,20 +102,20 @@ function createShipSquares(shipCoordinates, isUser)
         {
             for(let y = 0; y < 10; y++)
             {
-                if (isUser)
+                if (battleField == getContainer("player-grid-container"))
                 {
-                    const square = document.getElementById(x + " " + y);
-                    if(square.id === shipCoordinates[i])
+                    const square = document.getElementById("user square-" + x + "-" + y);
+                    if("ship-part-" + x + "-" + y === shipCoordinates[i])
                     {
-                        square.className = "square " + "square-ship ";
+                        square.className += " square-ship";
                     }
                 }
-                else
+                else if (battleField == getContainer("computer-grid-container"))
                 {
-                    const square = document.getElementById(x + " " + y + " computer");
-                    if(square.id === shipCoordinates[i] + " computer")
+                    const square = document.getElementById("computer square-" + x + "-" + y);
+                    if("ship-part-" + x + "-" + y === shipCoordinates[i])
                     {
-                        square.className = "square " + "square-shot " + "square-ship ";
+                        square.className += " square-ship";
                     }
                 }
             }
@@ -127,22 +126,24 @@ function createShipSquares(shipCoordinates, isUser)
 function createUserShips()
 {
     var squaresCount = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
-
     var shipCoordinates = createShipCoordinates(squaresCount);
-
-    createShipSquares(shipCoordinates, true);
+    var battleField = getContainer("player-grid-container");
+    createShipSquares(shipCoordinates, battleField);
 }
 
 function createComputerShips()
 {
     var squaresCount = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
-
     var shipCoordinates = createShipCoordinates(squaresCount);
-
-    createShipSquares(shipCoordinates, false);
+    var battleField = getContainer("computer-grid-container");
+    createShipSquares(shipCoordinates, battleField);
 }
 
-createUserGrid();
-createUserShips();
-createComputerGrid();
-createComputerShips();
+function startSinglePlayerMode()
+{    
+    shipPlacementGeneration();
+    createUserShips();
+    createComputerShips();
+}
+
+startSinglePlayerMode();
