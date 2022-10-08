@@ -11,20 +11,25 @@ function createGrid(container, isUser)
         for(let j = 0; j < 10; j++)
         {
             var item = document.createElement("div");
+            item.className = "square ";
             if(isUser)
             {
-                item.id = "user";
-                item.id += " square-" + i + "-" + j;
+                item.className += "user ";
+                item.className += getShipPartClass(i , j);
             }
             else
             {
-                item.id = "computer";
-                item.id += " square-" + i + "-" + j;
+                item.className += "computer ";
+                item.className += getShipPartClass(i , j);
             }
-            item.className += " square";
             container.appendChild(item);
         }
     }
+}
+
+function getShipPartClass(x, y)
+{
+    return `square-${x}-${y} `;
 }
 
 function getContainer(id)
@@ -41,9 +46,19 @@ function getShipRandomPosition()
     }
 }
 
+function getArray(x, y)
+{
+    var array = new Array(x);
+    for(let i = 0; i < y; i++)
+    {
+        array[i] = new Array(y);
+    }
+    return array;
+}
+
 function createShipCoordinates(squaresCount)
 {
-    var shipCoordinates = [];
+    var shipCoordinates = getArray(10, 10);
     
     for(let ship = 0; ship < squaresCount.length; ship++)
     {
@@ -55,7 +70,7 @@ function createShipCoordinates(squaresCount)
             {
                 for (let length = 0; length < squaresCount[ship]; length++)
                 {   
-                    shipCoordinates.push("ship-part-" + position.y + "-" + position.x);
+                    shipCoordinates[position.y][position.x] = true;
                     position.x++;
                 }
             }
@@ -64,7 +79,7 @@ function createShipCoordinates(squaresCount)
                 position.x = 10 - squaresCount[ship];
                 for (let length = 0; length < squaresCount[ship]; length++)
                 {   
-                    shipCoordinates.push("ship-part-" + position.y + "-" + position.x);
+                    shipCoordinates[position.y][position.x] = true;
                     position.x++;
                 }
             }
@@ -75,7 +90,7 @@ function createShipCoordinates(squaresCount)
             {
                 for (let length = 0; length < squaresCount[ship]; length++)
                 {   
-                    shipCoordinates.push("ship-part-" + position.y + "-" + position.x);
+                    shipCoordinates[position.y][position.x] = true;
                     position.y++;
                 }
             }
@@ -84,7 +99,7 @@ function createShipCoordinates(squaresCount)
                 position.y = 10 - squaresCount[ship];
                 for (let length = 0; length < squaresCount[ship]; length++)
                 {   
-                    shipCoordinates.push("ship-part-" + position.y + "-" + position.x);
+                    shipCoordinates[position.y][position.x] = true;
                     position.y++;
                 }
             }
@@ -96,54 +111,35 @@ function createShipCoordinates(squaresCount)
 
 function createShipSquares(shipCoordinates, battleField)
 {
-    for (let i = 0; i < shipCoordinates.length; i++) 
+    for (let x = 0; x < 10; x++)
     {
-        for (let x = 0; x < 10; x++)
+        for (let y = 0; y < 10; y++)
         {
-            for(let y = 0; y < 10; y++)
+            const shipPartClass = '.' + getShipPartClass(x, y);
+            const square = battleField.querySelector(shipPartClass);
+            if (shipCoordinates[x][y])
             {
-                if (battleField == getContainer("player-grid-container"))
-                {
-                    const square = document.getElementById("user square-" + x + "-" + y);
-                    if("ship-part-" + x + "-" + y === shipCoordinates[i])
-                    {
-                        square.className += " square-ship";
-                    }
-                }
-                else if (battleField == getContainer("computer-grid-container"))
-                {
-                    const square = document.getElementById("computer square-" + x + "-" + y);
-                    if("ship-part-" + x + "-" + y === shipCoordinates[i])
-                    {
-                        square.className += " square-ship";
-                    }
-                }
+                square.className += "square-ship ";
             }
         }
     }
 }
 
-function createUserShips()
+function createShips()
 {
     var squaresCount = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
-    var shipCoordinates = createShipCoordinates(squaresCount);
-    var battleField = getContainer("player-grid-container");
-    createShipSquares(shipCoordinates, battleField);
-}
-
-function createComputerShips()
-{
-    var squaresCount = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
-    var shipCoordinates = createShipCoordinates(squaresCount);
-    var battleField = getContainer("computer-grid-container");
-    createShipSquares(shipCoordinates, battleField);
+    var userShipCoordinates = createShipCoordinates(squaresCount);
+    var computerShipCoordinates = createShipCoordinates(squaresCount);
+    var userBattleField = getContainer("player-grid-container");
+    var computerBattleField = getContainer("computer-grid-container");
+    createShipSquares(userShipCoordinates, userBattleField);
+    createShipSquares(computerShipCoordinates, computerBattleField);
 }
 
 function startSinglePlayerMode()
 {    
     shipPlacementGeneration();
-    createUserShips();
-    createComputerShips();
+    createShips();
 }
 
 startSinglePlayerMode();
