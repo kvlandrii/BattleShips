@@ -53,45 +53,41 @@ function createShipCoordinates(squaresCount)
     
     for(let ship = 0; ship < squaresCount.length; ship++)
     {
-        var position = getShipRandomPosition();
-    
-        if (position.isHorizontal)
+        const nextPosition = function(position)
         {
-            if(10 - squaresCount[ship] >= position.x)
-            {
-                for (let length = 0; length < squaresCount[ship]; length++)
-                {   
-                    shipCoordinates[position.y][position.x] = true;
-                    position.x++;
-                }
-            }
-            else
-            {
-                position.x = 10 - squaresCount[ship];
-                for (let length = 0; length < squaresCount[ship]; length++)
-                {   
-                    shipCoordinates[position.y][position.x] = true;
-                    position.x++;
-                }
-            }
-        }
-        else
+            return position.isHorizontal
+                ? { x: position.x + 1, y: position.y, isHorizontal: position.isHorizontal }
+                : { x: position.x, y: position.y + 1, isHorizontal: position.isHorizontal };
+        };
+
+        let retry = true;
+        while (retry)
         {
-            if(10 - squaresCount[ship] >= position.y)
+            retry = false;
+            let tempCoordinates = [];
+
+            var position = getShipRandomPosition();
+            
+            for (let length = 0; length < squaresCount[ship]; length++)
             {
-                for (let length = 0; length < squaresCount[ship]; length++)
-                {   
-                    shipCoordinates[position.y][position.x] = true;
-                    position.y++;
+                if (position.x < 0 || position.x > 9
+                    || position.y < 0 || position.y > 9
+                    || shipCoordinates[position.x][position.y]
+                    )
+                {
+                    retry = true;
+                    break;
                 }
+                tempCoordinates.push({ x: position.x, y: position.y });
+                position = nextPosition(position);
             }
-            else
+
+            if (!retry)
             {
-                position.y = 10 - squaresCount[ship];
-                for (let length = 0; length < squaresCount[ship]; length++)
-                {   
-                    shipCoordinates[position.y][position.x] = true;
-                    position.y++;
+            for (let i = 0; i < squaresCount[ship]; i++)
+                {
+                    shipCoordinates[tempCoordinates[i].x][tempCoordinates[i].y] = true;
+                    console.log(`ship - ${ship}, position: {x: ${tempCoordinates[i].x}, y: ${tempCoordinates[i].y} }`);
                 }
             }
         }
@@ -118,7 +114,8 @@ function createShipSquares(shipCoordinates, battleField)
 
 function createShips()
 {
-    var squaresCount = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
+    var squaresCount = [4, 3, 3, 2];
+    //var squaresCount = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
     var userShipCoordinates = createShipCoordinates(squaresCount);
     var computerShipCoordinates = createShipCoordinates(squaresCount);
     var userBattleField = getContainer("player-grid-container");
