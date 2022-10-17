@@ -50,7 +50,8 @@ function getArray(x, y)
 function createShipCoordinates(squaresCount)
 {
     var shipCoordinates = getArray(10, 10);
-    
+    var occupiedSquares = getArray(12, 12);
+
     for(let ship = 0; ship < squaresCount.length; ship++)
     {
         const nextPosition = function(position)
@@ -72,7 +73,7 @@ function createShipCoordinates(squaresCount)
             {
                 if (position.x < 0 || position.x > 9
                     || position.y < 0 || position.y > 9
-                    || shipCoordinates[position.x][position.y]
+                    || occupiedSquares[position.x + 1][position.y + 1]
                     )
                 {
                     retry = true;
@@ -84,10 +85,25 @@ function createShipCoordinates(squaresCount)
 
             if (!retry)
             {
-            for (let i = 0; i < squaresCount[ship]; i++)
+                for (let i = 0; i < squaresCount[ship]; i++)
                 {
                     shipCoordinates[tempCoordinates[i].x][tempCoordinates[i].y] = true;
                     console.log(`ship - ${ship}, position: {x: ${tempCoordinates[i].x}, y: ${tempCoordinates[i].y} }`);
+                }
+
+                for (let i = 0; i < squaresCount[ship]; i++)
+                {
+                    var x = tempCoordinates[i].x + 1;
+                    var y = tempCoordinates[i].y + 1;
+                    occupiedSquares[x - 1][y - 1] = true;
+                    occupiedSquares[x - 1][y] = true;
+                    occupiedSquares[x - 1][y + 1] = true;
+                    occupiedSquares[x][y - 1] = true;
+                    occupiedSquares[x][y] = true;
+                    occupiedSquares[x][y + 1] = true;
+                    occupiedSquares[x + 1][y - 1] = true;
+                    occupiedSquares[x + 1][y] = true;
+                    occupiedSquares[x + 1][y + 1] = true;
                 }
             }
         }
@@ -114,8 +130,8 @@ function createShipSquares(shipCoordinates, battleField)
 
 function createShips()
 {
-    var squaresCount = [4, 3, 3, 2];
-    //var squaresCount = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
+
+    var squaresCount = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
     var userShipCoordinates = createShipCoordinates(squaresCount);
     var computerShipCoordinates = createShipCoordinates(squaresCount);
     var userBattleField = getContainer("player-grid-container");
