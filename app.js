@@ -1,10 +1,10 @@
 function shipPlacementGeneration()
 {
-    createGrid(getContainer("player-grid-container"), true);
-    createGrid(getContainer("computer-grid-container"), false);
+    createGrid(getContainer("player-grid-container"));
+    createGrid(getContainer("computer-grid-container"));
 }
 
-function createGrid(container, isUser)
+function createGrid(container)
 {
     for(let i = 0; i < 10; i++)
     {
@@ -12,16 +12,7 @@ function createGrid(container, isUser)
         {
             var item = document.createElement("div");
             item.className = "square ";
-            if(isUser)
-            {
-                item.className += "user ";
-                item.className += getShipPartClass(i , j);
-            }
-            else
-            {
-                item.className += "computer ";
-                item.className += getShipPartClass(i , j);
-            }
+            item.className += getShipPartClass(i , j);
             container.appendChild(item);
         }
     }
